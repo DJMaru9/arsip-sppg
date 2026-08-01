@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan Bahan Masuk SPPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12241c;
+    --deep:#1B4332;
+    --deep-dark:#0F2B1E;
+    --paper:#F7F8F6;
+    --card:#FFFFFF;
+    --line:#E1E5E0;
+    --good:#2D9D5F;
+    --good-bg:#EAF7EF;
+    --warn:#C9860A;
+    --warn-bg:#FBF1DD;
+    --bad:#C1440E;
+    --bad-bg:#FBE9E2;
+    --muted:#697168;
+    --shadow: 0 1px 2px rgba(18,36,28,.06), 0 8px 24px -12px rgba(18,36,28,.15);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .header{
+    background: linear-gradient(160deg, var(--deep) 0%, var(--deep-dark) 100%);
+    color:#fff;
+    padding:32px 20px 60px;
+    text-align:center;
+    position:relative;
+  }
+  .seal{
+    width:64px;height:64px;border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #52B788, #1B4332 70%);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:22px;
+    border:3px solid rgba(255,255,255,.35);
+    margin:0 auto 14px;
+  }
+  .header .eyebrow{font-size:12px; letter-spacing:1.5px; text-transform:uppercase; opacity:.7; font-weight:600;}
+  .header h1{font-size:22px; margin:6px 0 4px;}
+  .header .date-sub{font-size:14px; opacity:.85;}
+
+  .wrap{max-width:720px; margin:-38px auto 60px; padding:0 16px;}
+
+  .summary-card{
+    background:#fff;
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    padding:20px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:20px;
+  }
+  @media(max-width:520px){.summary-card{grid-template-columns:repeat(2,1fr);}}
+  .stat{text-align:center; padding:10px 4px;}
+  .stat .num{font-family:'Space Grotesk'; font-size:24px; font-weight:700;}
+  .stat .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; margin-top:2px;}
+  .stat.baik .num{color:var(--good);}
+  .stat.kurang .num{color:var(--warn);}
+  .stat.tolak .num{color:var(--bad);}
+
+  .verify-banner{
+    background:var(--good-bg);
+    color:var(--good);
+    border:1px solid #cdeedb;
+    border-radius:12px;
+    padding:12px 16px;
+    font-size:13px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .verify-banner .dot{width:8px;height:8px;border-radius:50%;background:var(--good); flex-shrink:0;}
+
+  .entry-card{
+    background:#fff;
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    padding:18px;
+    margin-bottom:16px;
+    border-left:4px solid var(--line);
+  }
+  .entry-card.st-Baik{border-left-color:var(--good);}
+  .entry-card.st-Kurang{border-left-color:var(--warn);}
+  .entry-card.st-Tolak{border-left-color:var(--bad);}
+
+  .entry-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px;}
+  .entry-top h3{margin:0; font-size:17px;}
+  .status-chip{
+    display:inline-flex; align-items:center; gap:5px;
+    padding:5px 12px; border-radius:999px; font-size:12px; font-weight:700; flex-shrink:0;
+  }
+  .status-Baik{background:var(--good-bg); color:var(--good);}
+  .status-Kurang{background:var(--warn-bg); color:var(--warn);}
+  .status-Tolak{background:var(--bad-bg); color:var(--bad);}
+
+  .bahan-photo{width:100%; max-height:280px; object-fit:cover; border-radius:12px; margin-bottom:12px; background:#eee; display:block;}
+
+  .weigh-row{
+    display:flex; gap:16px; background:#F7F8F6; border-radius:10px; padding:12px 14px; margin-bottom:12px; flex-wrap:wrap;
+  }
+  .weigh-item{flex:1; min-width:100px;}
+  .weigh-item .wl{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.3px;}
+  .weigh-item .wv{font-family:'Space Grotesk'; font-weight:700; font-size:16px; margin-top:2px;}
+  .weigh-diff{font-size:12px; font-weight:600; margin-top:4px;}
+  .weigh-diff.bad{color:var(--bad);}
+  .weigh-diff.good{color:var(--good);}
+  .weigh-diff.neutral{color:var(--muted);}
+
+  .info-line{font-size:13.5px; color:var(--ink); margin:6px 0;}
+  .info-line b{font-weight:600;}
+  .catatan-box{
+    background:#FCFBF5; border:1px solid #EFE9D6; border-radius:9px; padding:10px 12px; font-size:13px; margin-top:10px; color:#5c5231;
+  }
+
+  .people-row{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;}
+  .person-card{
+    background:#F7F8F6; border-radius:10px; padding:10px; text-align:center;
+  }
+  .person-card img{width:52px; height:52px; border-radius:50%; object-fit:cover; margin-bottom:6px; background:#ddd;}
+  .person-card .role{font-size:10px; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); font-weight:700;}
+  .person-card .name{font-size:13px; font-weight:600; margin-top:2px;}
+
+  .empty-state{
+    text-align:center; padding:60px 20px; color:var(--muted);
+  }
+  .empty-state .big{font-size:40px; margin-bottom:12px;}
+
+  .loading{text-align:center; padding:60px 20px; color:var(--muted);}
+
+  .footer-note{
+    text-align:center; color:var(--muted); font-size:11.5px; margin-top:30px; line-height:1.6;
+  }
+  .footer-note .mono{font-size:11px;}
+
+  .action-bar{
+    display:flex; justify-content:center; margin-bottom:20px;
+  }
+  .btn-download{
+    background:var(--deep);
+    color:#fff;
+    border:none;
+    padding:12px 24px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    font-family:'Inter';
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    box-shadow:var(--shadow);
+  }
+  .btn-download:hover{background:var(--deep-dark);}
+
+  @media print{
+    body{background:#fff;}
+    .action-bar{display:none;}
+    .header{background:var(--deep) !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; padding:24px 20px 40px;}
+    .wrap{margin-top:-30px;}
+    .entry-card{box-shadow:none; border:1px solid var(--line); break-inside:avoid; page-break-inside:avoid;}
+    .summary-card{box-shadow:none; border:1px solid var(--line);}
+    .verify-banner{break-inside:avoid;}
+    .status-Baik, .status-Kurang, .status-Tolak,
+    .stat.baik .num, .stat.kurang .num, .stat.tolak .num{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="seal" id="seal">--</div>
+  <div class="eyebrow">Satuan Pelayanan Pemenuhan Gizi</div>
+  <h1>Laporan Bahan Masuk Harian</h1>
+  <div class="date-sub" id="tanggal-display">Memuat tanggal...</div>
+</div>
+
+<div class="wrap">
+  <div id="content">
+    <div class="loading">Memuat data laporan…</div>
+  </div>
+
+  <div class="footer-note">
+    Laporan ini dihasilkan otomatis dari sistem arsip digital SPPG.<br>
+    Data terverifikasi langsung dari basis data pada saat halaman dibuka.
+  </div>
+</div>
+
+<script>
+// ======================================================
+// TEMPEL URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
+// (didapat setelah Deploy > Web app di Apps Script — lihat PANDUAN-GOOGLE-SHEETS.md)
+// ======================================================
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlrP6IK7vbyY_G9Zmj7s-shGwT87tVAgDFbEb2nMd012LziOeHByVqd5m_rtcYOL2R6w/exec";
+// ======================================================
+
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function getParam(name){
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+async function main(){
+  const tanggal = getParam('tanggal');
+  const content = document.getElementById('content');
+
+  if(!tanggal){
+    content.innerHTML = `<div class="empty-state"><div class="big">📅</div>Tanggal laporan tidak ditemukan pada tautan.</div>`;
+    return;
+  }
+
+  const d = new Date(tanggal+'T00:00:00');
+  const namaHari = d.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('tanggal-display').textContent = namaHari;
+  document.getElementById('seal').textContent = String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0');
+
+  if(APPS_SCRIPT_URL === "GANTI_DENGAN_URL_APPS_SCRIPT_ANDA"){
+    content.innerHTML = `<div class="empty-state"><div class="big">⚙</div>Halaman ini belum dikonfigurasi.<br>Tempel URL Apps Script Anda di dalam file laporan.html.</div>`;
+    return;
+  }
+
+  try{
+    const url = APPS_SCRIPT_URL + '?' + new URLSearchParams({ tanggal }).toString();
+    const res = await fetch(url);
+    const json = await res.json();
+    if(!json.success) throw new Error(json.error || 'Gagal memuat data');
+
+    const entries = (json.data || []).map(e => ({
+      nama: e.Nama, pesan: e.Pesan, datang: e.Datang, selisih: e.Selisih,
+      supplier: e.Supplier, kualitas: e.Kualitas, catatan: e.Catatan,
+      pembawaNama: e.PembawaNama, penerimaNama: e.PenerimaNama,
+      fotoBahanUrl: e.FotoBahanUrl, fotoPembawaUrl: e.FotoPembawaUrl, fotoPenerimaUrl: e.FotoPenerimaUrl,
+      dibuatPada: e.DibuatPada
+    })).sort((a,b)=>a.dibuatPada-b.dibuatPada);
+
+    if(entries.length===0){
+      content.innerHTML = `<div class="empty-state"><div class="big">📦</div>Tidak ada data bahan masuk tercatat pada tanggal ini.</div>`;
+      return;
+    }
+
+    render(entries);
+  }catch(e){
+    console.error(e);
+    content.innerHTML = `<div class="empty-state"><div class="big">⚠</div>Gagal memuat data laporan.<br><span class="mono" style="font-size:11px;">${escapeHtml(e.message)}</span></div>`;
+  }
+}
+
+function render(entries){
+  const baik = entries.filter(e=>e.kualitas==='Baik').length;
+  const kurang = entries.filter(e=>e.kualitas==='Kurang').length;
+  const tolak = entries.filter(e=>e.kualitas==='Tolak').length;
+
+  let html = `
+    <div class="action-bar">
+      <button class="btn-download" onclick="window.print()">⬇ Unduh Laporan (PDF)</button>
+    </div>
+    <div class="verify-banner"><span class="dot"></span>Data ini diambil langsung dari Google Sheets pada saat halaman dibuka — bukan salinan statis.</div>
+    <div class="summary-card">
+      <div class="stat"><div class="num">${entries.length}</div><div class="lbl">Total Bahan</div></div>
+      <div class="stat baik"><div class="num">${baik}</div><div class="lbl">Baik</div></div>
+      <div class="stat kurang"><div class="num">${kurang}</div><div class="lbl">Kurang</div></div>
+      <div class="stat tolak"><div class="num">${tolak}</div><div class="lbl">Tolak</div></div>
+    </div>
+  `;
+
+  entries.forEach(e=>{
+    const selisih = e.selisih ?? ((e.datang||0)-(e.pesan||0));
+    let diffClass = 'neutral', diffTxt = 'Sesuai pesanan';
+    if(selisih < -0.001){ diffClass='bad'; diffTxt = `⚠ Kurang ${Math.abs(selisih).toFixed(1)} kg dari pesanan`; }
+    else if(selisih > 0.001){ diffClass='neutral'; diffTxt = `+${selisih.toFixed(1)} kg dari pesanan`; }
+    else { diffClass='good'; diffTxt = '✓ Sesuai pesanan'; }
+
+    html += `
+    <div class="entry-card st-${e.kualitas}">
+      <div class="entry-top">
+        <h3>${escapeHtml(e.nama)}</h3>
+        <span class="status-chip status-${e.kualitas}">${e.kualitas}</span>
+      </div>
+      ${e.fotoBahanUrl ? `<img class="bahan-photo" src="${e.fotoBahanUrl}" alt="Foto ${escapeHtml(e.nama)}">` : ''}
+      <div class="weigh-row">
+        <div class="weigh-item">
+          <div class="wl">Dipesan</div>
+          <div class="wv">${e.pesan ?? '-'} kg</div>
+        </div>
+        <div class="weigh-item">
+          <div class="wl">Ditimbang</div>
+          <div class="wv">${e.datang ?? '-'} kg</div>
+          <div class="weigh-diff ${diffClass}">${diffTxt}</div>
+        </div>
+      </div>
+      <div class="info-line"><b>Pemasok:</b> ${escapeHtml(e.supplier||'-')}</div>
+      ${e.catatan ? `<div class="catatan-box">"${escapeHtml(e.catatan)}"</div>` : ''}
+      <div class="people-row">
+        <div class="person-card">
+          ${e.fotoPembawaUrl ? `<img src="${e.fotoPembawaUrl}">` : `<div style="width:52px;height:52px;border-radius:50%;background:#ddd;margin:0 auto 6px;"></div>`}
+          <div class="role">Membawa</div>
+          <div class="name">${escapeHtml(e.pembawaNama||'-')}</div>
+        </div>
+        <div class="person-card">
+          ${e.fotoPenerimaUrl ? `<img src="${e.fotoPenerimaUrl}">` : `<div style="width:52px;height:52px;border-radius:50%;background:#ddd;margin:0 auto 6px;"></div>`}
+          <div class="role">Menerima</div>
+          <div class="name">${escapeHtml(e.penerimaNama||'-')}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('content').innerHTML = html;
+}
+
+main();
+</script>
+</body>
+</html>
